@@ -1,24 +1,38 @@
 package otter.votter;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.squareup.picasso.Picasso;
+
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.ext.R;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -59,6 +73,9 @@ public class SatelliteMenu extends FrameLayout {
 	private int satelliteDistance = DEFAULT_SATELLITE_DISTANCE;	
 	private int expandDuration = DEFAULT_EXPAND_DURATION;
 	private boolean closeItemsOnClick = DEFAULT_CLOSE_ON_CLICK;
+	
+	private int mainWidth = 0;
+	private int mainHeight = 0;
 
 	public SatelliteMenu(Context context) {
 		super(context);
@@ -78,7 +95,7 @@ public class SatelliteMenu extends FrameLayout {
 	private void init(Context context, AttributeSet attrs, int defStyle) {
 		LayoutInflater.from(context).inflate(R.layout.sat_main, this, true);		
 		imgMain = (ImageView) findViewById(R.id.sat_main);
-
+		
 		if(attrs != null){			
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SatelliteMenu, defStyle, 0);					
 			satelliteDistance = typedArray.getDimensionPixelSize(R.styleable.SatelliteMenu_satelliteDistance, DEFAULT_SATELLITE_DISTANCE);
@@ -251,12 +268,47 @@ public class SatelliteMenu extends FrameLayout {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		recalculateMeasureDiff();
+		
+		WindowManager wm = (WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE);
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+		wm.getDefaultDisplay().getMetrics(displaymetrics);
+		int width = displaymetrics.widthPixels/8;
+		
+		FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+		imgMain.setLayoutParams(parms);
+		
+		width = displaymetrics.widthPixels/10;
+		
+		int index = 0;
+		float[] degrees = getDegrees(menuItems.size());
+		for (SatelliteMenuItem menuItem : menuItems) {
+			
+			FrameLayout.LayoutParams parmsitem = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			menuItem.getView().setLayoutParams(parmsitem);
+			
+			
+			FrameLayout.LayoutParams parmsitem2 = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			int finalX = SatelliteAnimationCreator.getTranslateX(
+					degrees[index], satelliteDistance);
+			int finalY = SatelliteAnimationCreator.getTranslateY(
+					degrees[index], satelliteDistance);
+			parmsitem2.bottomMargin = Math.abs(finalY);
+			parmsitem2.leftMargin = Math.abs(finalX);
+			menuItem.getCloneView().setLayoutParams(parmsitem2);
+			index++;
+		}
 
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		
+		recalculateMeasureDiff();
+		
 		int totalHeight = imgMain.getHeight() + satelliteDistance + measureDiff;
 		int totalWidth = imgMain.getWidth() + satelliteDistance + measureDiff;
 		setMeasuredDimension(totalWidth, totalHeight);
+		
+		
+		
+		
 	}
 
 	private static class SatelliteItemClickAnimationListener implements Animation.AnimationListener {
@@ -425,6 +477,9 @@ public class SatelliteMenu extends FrameLayout {
 	 */
 	public void setMainImage(int resource) {
 		this.imgMain.setImageResource(resource);
+		//Picasso.with(this.getContext())
+		//.load(resource)//.fit().centerInside()
+		//.into(imgMain);
 	}
 
 	/**
@@ -434,6 +489,10 @@ public class SatelliteMenu extends FrameLayout {
 	 */
 	public void setMainImage(Drawable drawable) {
 		this.imgMain.setImageDrawable(drawable);
+		//Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"+this.getContext().getPackageName()+"/drawable/" + drawable);
+		//Picasso.with(this.getContext())
+		//.load(uri)//.fit().centerInside()
+		//.into(imgMain);
 	}
 
 	/**

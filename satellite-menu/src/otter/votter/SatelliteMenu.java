@@ -21,6 +21,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -272,22 +273,28 @@ public class SatelliteMenu extends FrameLayout {
 		WindowManager wm = (WindowManager) this.getContext().getSystemService(Context.WINDOW_SERVICE);
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		wm.getDefaultDisplay().getMetrics(displaymetrics);
-		int width = displaymetrics.widthPixels/8;
+		//int width = displaymetrics.widthPixels/8;
+		int pxwidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, displaymetrics);
 		
-		FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+		//FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams(50,50, Gravity.LEFT|Gravity.BOTTOM);
+		FrameLayout.LayoutParams parms = new FrameLayout.LayoutParams(pxwidth,pxwidth, Gravity.LEFT|Gravity.BOTTOM);
 		imgMain.setLayoutParams(parms);
 		
-		width = displaymetrics.widthPixels/10;
+		//width = displaymetrics.widthPixels/10;
+		pxwidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, displaymetrics);
 		
 		int index = 0;
 		float[] degrees = getDegrees(menuItems.size());
 		for (SatelliteMenuItem menuItem : menuItems) {
 			
-			FrameLayout.LayoutParams parmsitem = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			
+			//FrameLayout.LayoutParams parmsitem = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			FrameLayout.LayoutParams parmsitem = new FrameLayout.LayoutParams(pxwidth,pxwidth, Gravity.LEFT|Gravity.BOTTOM);
 			menuItem.getView().setLayoutParams(parmsitem);
 			
 			
-			FrameLayout.LayoutParams parmsitem2 = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			//FrameLayout.LayoutParams parmsitem2 = new FrameLayout.LayoutParams(width,width, Gravity.LEFT|Gravity.BOTTOM);
+			FrameLayout.LayoutParams parmsitem2 = new FrameLayout.LayoutParams(pxwidth,pxwidth, Gravity.LEFT|Gravity.BOTTOM);
 			int finalX = SatelliteAnimationCreator.getTranslateX(
 					degrees[index], satelliteDistance);
 			int finalY = SatelliteAnimationCreator.getTranslateY(

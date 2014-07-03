@@ -5,6 +5,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="C:/Users/larasati/Documents/GitHub/AndroidApps/Support Libraries/picasso-2.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ndgreen/Documents/GitHub/AndroidApps/Support Libraries/picasso-2.3.2.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

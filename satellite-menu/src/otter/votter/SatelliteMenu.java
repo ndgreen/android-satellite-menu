@@ -1,39 +1,30 @@
 package otter.votter;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.squareup.picasso.Picasso;
-
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.ext.R;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -82,7 +73,9 @@ public class SatelliteMenu extends FrameLayout {
 		super(context);
 		init(context, null, 0);
 	}
-
+public boolean isRotated(){
+	return rotated;
+}
 	public SatelliteMenu(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context, attrs, 0);
@@ -175,6 +168,24 @@ public class SatelliteMenu extends FrameLayout {
 				for (SatelliteMenuItem item : menuItems) {
 					item.getView().startAnimation(item.getInAnimation());
 				}
+				// Obtain MotionEvent object
+				long downTime = SystemClock.uptimeMillis();
+				long eventTime = SystemClock.uptimeMillis() + 100;
+				float x = 0.0f;
+				float y = 0.0f;
+				// List of meta states found here: developer.android.com/reference/android/view/KeyEvent.html#getMetaState()
+				int metaState = 0;
+				MotionEvent motionEvent = MotionEvent.obtain(
+				    downTime, 
+				    eventTime, 
+				    MotionEvent.ACTION_UP, 
+				    x, 
+				    y, 
+				    metaState
+				);
+
+				// Dispatch touch event to view
+				imgMain.dispatchTouchEvent(motionEvent);
 			}
 			rotated = !rotated;
 		}

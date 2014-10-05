@@ -604,6 +604,7 @@ public boolean isRotated(){
 
 		@Override
 		public void writeToParcel(Parcel out, int flags) {
+			super.writeToParcel(out, flags);
 			out.writeString(Boolean.toString(rotated));
 			out.writeFloat(totalSpacingDegree);
 			out.writeInt(satelliteDistance);
